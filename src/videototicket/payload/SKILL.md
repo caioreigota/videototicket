@@ -1,21 +1,21 @@
 ---
 name: videototicket
-description: Varre uma pasta de vídeos pendentes, e para cada vídeo extrai frames (ffmpeg), transcreve narração (faster-whisper), opcionalmente identifica um item pai (Epic/PBI/Feature), monta um ticket com repro steps e anexos, pede aprovação do usuário, cria o ticket na plataforma configurada (Azure DevOps, Jira ou GitHub) e move o vídeo para a pasta de processados. Use quando o usuário pedir para "criar bug/ticket a partir de vídeo", "processar os vídeos pendentes" ou equivalente. Na primeira execução em um projeto (sem config.json), conduz um setup guiado antes de processar qualquer vídeo.
+description: Transformar gravações de tela em tickets revisáveis no Azure DevOps, Jira ou GitHub. Extrair frames, transcrever a narração, reconstruir passos de reprodução, sugerir item pai e anexos, apresentar um rascunho para aprovação e somente então criar o ticket e arquivar o vídeo. Usar quando o usuário pedir para criar um bug ou ticket a partir de vídeo, analisar uma gravação de erro, processar vídeos pendentes ou configurar esse fluxo pela primeira vez.
 ---
 
 # Fluxo: vídeo → ticket
 
-Processa vídeos de uma pasta "pendentes", um de cada vez, criando um ticket
+Processar vídeos de uma pasta "pendentes", um de cada vez, criando um ticket
 (Bug/Issue) na plataforma configurada para cada um, com aprovação do usuário
 antes de salvar. É genérica: qualquer pessoa pode instalar esta skill (via
-`videototicket install`, global ou `--project`, em Claude Code ou em
-qualquer assistente compatível com Agent-Skills) e configurá-la para o
+`videototicket install`, global ou `--project`, no Codex, Claude Code ou em
+um assistente compatível com Agent-Skills) e configurá-la para o
 próprio time/plataforma — nada aqui é específico de uma empresa.
 
 **Caminhos de script:** todos os comandos abaixo (`scripts/extract_frames.py`
 etc.) são relativos ao diretório **desta própria skill** — ou seja, à pasta
-onde este `SKILL.md` está (ex. `~/.claude/skills/videototicket/` ou
-`<projeto>/.claude/skills/videototicket/`, dependendo de como foi
+onde este `SKILL.md` está (ex. `~/.codex/skills/videototicket/`,
+`~/.claude/skills/videototicket/` ou o equivalente no projeto), dependendo de como foi
 instalada), **não** à raiz do projeto do usuário. Resolva o caminho absoluto
 a partir de onde você carregou este arquivo antes de rodar qualquer comando;
 `config.json`, `config.example.json` e `scripts/` vivem todos ali, lado a
@@ -97,6 +97,11 @@ apenas dados não sensíveis (org, projeto, repo, e-mail, preferências).
 - As pastas de vídeo (`videototicket/pendentes` e `videototicket/processados`
   por padrão, ou o que estiver em `folders.pending`/`folders.processed`)
   existem na raiz do projeto — `install --project` já cria as padrão.
+
+Antes de iniciar um lote, verificar `python --version`, `ffmpeg -version` e
+`ffprobe -version`. Verificar também a autenticação da plataforma escolhida.
+Se algum requisito falhar, explicar o comando corretivo e parar antes de
+extrair arquivos ou tentar criar tickets.
 
 ## Loop principal
 

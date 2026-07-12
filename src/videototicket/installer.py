@@ -8,8 +8,8 @@ SKILL_NAME = "videototicket"
 
 # Cada entrada resolve o diretório onde a skill deve ser escrita.
 # "claude": convenção nativa do Claude Code.
-# "agents"/"skills": spec genérica Agent-Skills (github.com/anthropics/skills),
-# lida por outros frameworks compatíveis (Cursor, Codex e afins).
+# "codex": diretório de skills do Codex, respeitando CODEX_HOME.
+# "agents"/"skills": convenção genérica Agent-Skills.
 _PLATFORM_DIRS = {
     "claude": {
         "global": lambda: Path.home() / ".claude" / "skills" / SKILL_NAME,
@@ -17,6 +17,10 @@ _PLATFORM_DIRS = {
     },
     "agents": {
         "global": lambda: Path.home() / ".agents" / "skills" / SKILL_NAME,
+        "project": lambda: Path.cwd() / ".agents" / "skills" / SKILL_NAME,
+    },
+    "codex": {
+        "global": lambda: Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")) / "skills" / SKILL_NAME,
         "project": lambda: Path.cwd() / ".agents" / "skills" / SKILL_NAME,
     },
 }

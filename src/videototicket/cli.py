@@ -15,16 +15,22 @@ def build_parser():
     install_p = sub.add_parser("install", help="Instala (ou atualiza) a skill")
     install_p.add_argument(
         "--project", action="store_true",
-        help="Instala no projeto atual (./.claude/skills ou ./.agents/skills) em vez do perfil global do usuário",
+        help="Instala no projeto atual, em vez do perfil global do usuário",
     )
     install_p.add_argument(
         "--platform", choices=PLATFORMS, default="claude",
-        help="Plataforma alvo (default: claude). 'agents' (alias 'skills') usa a spec genérica Agent-Skills.",
+        help="Plataforma alvo (default: claude). Use 'codex' para CODEX_HOME/skills ou 'agents' para Agent-Skills.",
     )
 
     uninstall_p = sub.add_parser("uninstall", help="Remove a skill instalada")
-    uninstall_p.add_argument("--project", action="store_true")
-    uninstall_p.add_argument("--platform", choices=PLATFORMS, default="claude")
+    uninstall_p.add_argument(
+        "--project", action="store_true",
+        help="Remove a instalação do projeto atual, em vez da instalação global",
+    )
+    uninstall_p.add_argument(
+        "--platform", choices=PLATFORMS, default="claude",
+        help="Plataforma alvo usada na instalação (default: claude)",
+    )
 
     return parser
 

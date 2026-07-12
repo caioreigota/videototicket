@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "videototicket"
 version = "0.1.0"
-description = "Instalador da skill videototicket: transforma gravações de tela em tickets (Azure DevOps, Jira ou GitHub) com o Claude Code ou outros assistentes compatíveis com Agent-Skills."
+description = "Instalador da skill Video to Ticket para Codex, Claude Code e assistentes compatíveis com Agent-Skills."
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = []
