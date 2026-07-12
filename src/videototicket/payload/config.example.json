@@ -1,0 +1,39 @@
+{
+  "platform": "azure-devops",
+  "ticket_type": "Bug",
+  "language": "pt",
+  "require_parent_link": false,
+
+  "folders": {
+    "pending": "videototicket/pendentes",
+    "processed": "videototicket/processados"
+  },
+
+  "defaults": {
+    "assignee": null,
+    "labels": [],
+    "tags": [],
+    "area_path": null,
+    "custom_fields": {}
+  },
+
+  "azure_devops": {
+    "organization": "https://dev.azure.com/SUA-ORG",
+    "project": "SEU_PROJETO",
+    "team": "SEU_PROJETO Team",
+    "auth": "pat",
+    "parent_work_item_types": ["Product Backlog Item", "Feature", "Epic", "User Story"]
+  },
+
+  "jira": {
+    "site_url": "https://sua-empresa.atlassian.net",
+    "project_key": "PROJ",
+    "email": "voce@suaempresa.com",
+    "epic_link_field": null,
+    "parent_issue_types": ["Epic", "Story"]
+  },
+
+  "github": {
+    "repo": "sua-org/seu-repo"
+  }
+}

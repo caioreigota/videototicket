@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "videototicket"
+version = "0.1.0"
+description = "Instalador da skill videototicket: transforma gravações de tela em tickets (Azure DevOps, Jira ou GitHub) com o Claude Code ou outros assistentes compatíveis com Agent-Skills."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+# Dependências usadas pelos scripts da skill (extract_frames.py, transcribe_audio.py,
+# create_ticket.py) quando o assistente os executa via subprocess — não pelo instalador
+# em si. Instale no MESMO interpretador Python que o assistente vai chamar.
+full = ["faster-whisper", "requests"]
+
+[project.scripts]
+videototicket = "videototicket.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/videototicket"]
