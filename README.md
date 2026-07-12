@@ -1,10 +1,10 @@
 # videototicket
 
-Skill do Claude Code (e de qualquer assistente compatível com a spec
-[Agent-Skills](https://github.com/anthropics/skills)) que transforma uma
-gravação de tela (bug, feedback, gravação de uso) em um ticket completo —
-frames do erro, transcrição da narração e repro steps — na sua ferramenta de
-tickets: **Azure DevOps**, **Jira** ou **GitHub**.
+Skill para **Claude Code** e **Codex** (e qualquer outro assistente
+compatível com a spec aberta [Agent-Skills](https://github.com/anthropics/skills))
+que transforma uma gravação de tela (bug, feedback, gravação de uso) em um
+ticket completo — frames do erro, transcrição da narração e repro steps —
+na sua ferramenta de tickets: **Azure DevOps**, **Jira** ou **GitHub**.
 
 Genérica: não há organização, projeto, responsável ou campo customizado
 fixo — tudo é configurado por você na primeira execução, para o seu próprio
@@ -12,8 +12,34 @@ time/plataforma.
 
 ---
 
+## 0. Compatibilidade
+
+| Assistente | Convenção usada | Comando de instalação | Pasta (perfil do usuário) | Pasta (projeto) |
+|---|---|---|---|---|
+| **Claude Code** | nativa do Claude Code | `videototicket install` (`--platform claude` é o default) | `~/.claude/skills/videototicket/` | `./.claude/skills/videototicket/` |
+| **Codex** (e outros compatíveis) | spec aberta [Agent-Skills](https://github.com/anthropics/skills) | `videototicket install --platform agents` | `~/.agents/skills/videototicket/` | `./.agents/skills/videototicket/` |
+
+O conteúdo instalado é **idêntico** nos dois casos (`SKILL.md` + `scripts/` +
+`config.example.json`) — só muda a pasta de destino, para bater com a
+convenção de descoberta de cada assistente. Nos dois, a skill é acionada por
+**linguagem natural** dentro da conversa (ex. "criar ticket a partir de
+vídeo"), não por um comando de barra tipo `/videototicket`.
+
+> Se o Codex (ou outro assistente) que você usa não descobrir a skill
+> automaticamente em `.agents/skills/`, confira a documentação da versão que
+> você tem instalada — o suporte à spec Agent-Skills pode variar entre
+> clientes/versões.
+
+O restante deste guia (pré-requisitos, configuração, uso diário) vale para
+os dois assistentes; as únicas diferenças estão marcadas explicitamente nas
+seções [2](#2-instalação-passo-a-passo) (instalação) e
+[6](#6-desinstalar) (desinstalação).
+
+---
+
 ## Índice
 
+0. [Compatibilidade](#0-compatibilidade)
 1. [Pré-requisitos](#1-pré-requisitos)
 2. [Instalação passo a passo](#2-instalação-passo-a-passo)
 3. [Configuração inicial (primeira execução)](#3-configuração-inicial-primeira-execução)
@@ -139,31 +165,33 @@ pipx install -e .
 
 ### Passo 2 — registre a skill no seu assistente
 
-```bash
-videototicket install
-```
+Escolha o bloco do seu assistente. O restante do guia (configuração, uso
+diário) é **idêntico** depois disso.
 
-Isso instala em `~/.claude/skills/videototicket/` (perfil do usuário,
-disponível em qualquer projeto que você abrir com Claude Code).
-
-**Variações do comando** (combine as flags conforme sua necessidade):
+#### Claude Code
 
 ```bash
-# Só no projeto atual, em vez do perfil global do usuário
-# (também cria a pasta de vídeos — veja abaixo):
-videototicket install --project
-
-# Em outro assistente compatível com a spec genérica Agent-Skills
-# (Cursor, Codex e afins), em vez da convenção nativa do Claude Code:
-videototicket install --platform agents
-
-# As duas coisas juntas — instala em ./.agents/skills/ deste projeto:
-videototicket install --platform agents --project
+videototicket install              # perfil do usuário: ~/.claude/skills/videototicket/
+videototicket install --project    # só neste projeto: ./.claude/skills/videototicket/ (+ cria pasta de vídeos)
 ```
+
+`--platform claude` é o default — não precisa escrever.
+
+#### Codex (ou outro assistente compatível com Agent-Skills)
+
+```bash
+videototicket install --platform agents              # perfil do usuário: ~/.agents/skills/videototicket/
+videototicket install --platform agents --project    # só neste projeto: ./.agents/skills/videototicket/ (+ cria pasta de vídeos)
+```
+
+`agents` é o nome da plataforma porque segue a spec aberta **Agent-Skills**,
+não uma convenção exclusiva do Codex — o mesmo comando serve para qualquer
+outro assistente (ex. Cursor) que leia skills nesse formato.
 
 > Diferente de skills que se invocam com `/nome-da-skill`, esta aqui é
-> acionada por linguagem natural — peça "criar ticket a partir de vídeo" (ou
-> equivalente) na conversa, não um comando de barra.
+> acionada por linguagem natural em ambos os assistentes — peça "criar
+> ticket a partir de vídeo" (ou equivalente) na conversa, não um comando de
+> barra.
 
 **Com `--project`, o instalador também cria a pasta de vídeos**, pronta pra
 usar, na raiz do projeto atual:
@@ -180,6 +208,8 @@ dentro dessas pastas — só cria o que ainda não existir.
 
 ### Passo 3 — confirme que instalou certo
 
+**Claude Code:**
+
 ```bash
 # Windows (PowerShell):
 Get-ChildItem "$env:USERPROFILE\.claude\skills\videototicket" -Recurse
@@ -187,6 +217,19 @@ Get-ChildItem "$env:USERPROFILE\.claude\skills\videototicket" -Recurse
 # macOS/Linux:
 find ~/.claude/skills/videototicket -type f
 ```
+
+**Codex / Agent-Skills (instalado com `--platform agents`):**
+
+```bash
+# Windows (PowerShell):
+Get-ChildItem "$env:USERPROFILE\.agents\skills\videototicket" -Recurse
+
+# macOS/Linux:
+find ~/.agents/skills/videototicket -type f
+```
+
+Se você instalou com `--project`, troque `$env:USERPROFILE`/`~` pelo
+caminho do projeto (`./.claude/skills/...` ou `./.agents/skills/...`).
 
 Você deve ver `SKILL.md`, `config.example.json`, `requirements.txt` e a
 pasta `scripts/`. Se não aparecer nada, revise o Passo 2 — provavelmente o
@@ -200,10 +243,10 @@ dentro da conversa com o assistente, não por linha de comando.
 
 ## 3. Configuração inicial (primeira execução)
 
-Isso acontece **uma vez**, dentro do Claude Code (ou assistente equivalente),
-não no terminal.
+Isso acontece **uma vez**, dentro do assistente (Claude Code, Codex ou
+equivalente), não no terminal.
 
-1. Abra o Claude Code no projeto onde você quer usar a skill.
+1. Abra o assistente (Claude Code ou Codex) no projeto onde você quer usar a skill.
 2. Peça algo como **"criar ticket a partir de vídeo"** ou **"processar os
    vídeos pendentes"**.
 3. Como ainda não existe `config.json` ao lado do `SKILL.md` instalado, o
@@ -292,13 +335,19 @@ parte do payload instalado.
 ## 6. Desinstalar
 
 ```bash
-videototicket uninstall                              # global, plataforma claude
+# Claude Code:
+videototicket uninstall                              # perfil do usuário
 videototicket uninstall --project                    # só o projeto atual
-videototicket uninstall --platform agents [--project]
+
+# Codex / Agent-Skills:
+videototicket uninstall --platform agents             # perfil do usuário
+videototicket uninstall --platform agents --project   # só o projeto atual
 ```
 
 Isso remove a pasta inteira da skill instalada (incluindo o `config.json`,
-se você quiser reinstalar do zero depois).
+se você quiser reinstalar do zero depois). Use a mesma combinação de flags
+(`--platform`/`--project`) que você usou na instalação, senão o comando vai
+procurar em outro lugar.
 
 ---
 
@@ -310,7 +359,7 @@ videototicket/
   src/videototicket/
     cli.py                          `videototicket install|uninstall`
     installer.py                    resolve destino por plataforma e copia o payload
-    payload/                        ISTO é o que vira .claude/skills/videototicket/
+    payload/                        ISTO é o que vira .claude/skills/videototicket/ (ou .agents/skills/videototicket/ no Codex)
       SKILL.md                      instruções que o assistente segue
       config.example.json           template de configuração
       requirements.txt              deps dos scripts (faster-whisper, requests)
