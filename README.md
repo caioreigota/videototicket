@@ -106,35 +106,32 @@ dos dois, os passos seguintes (registrar a skill no assistente) são iguais.
 
 ### Opção A — direto do GitHub (repositório público, sem clonar)
 
-Se você subiu este repositório para o GitHub como público, qualquer pessoa
-(inclusive você, em outra máquina) instala com um único comando, sem
-precisar clonar nem baixar nada manualmente:
+O repositório é público — qualquer pessoa (inclusive você, em outra máquina)
+instala com um único comando, sem precisar clonar nem baixar nada
+manualmente:
 
 ```bash
-pip install "git+https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git"
+pip install "git+https://github.com/caioreigota/videototicket.git"
 ```
-
-Troque `SEU-USUARIO/SEU-REPOSITORIO` pelo caminho real do seu repositório no
-GitHub (ex. `caioreigota/videototicket`).
 
 Com as dependências dos *scripts* (faster-whisper + requests) já incluídas:
 
 ```bash
-pip install "videototicket[full] @ git+https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git"
+pip install "videototicket[full] @ git+https://github.com/caioreigota/videototicket.git"
 ```
 
 Ou via `pipx` (ambiente isolado, recomendado para CLIs Python):
 
 ```bash
-pipx install "git+https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git"
+pipx install "git+https://github.com/caioreigota/videototicket.git"
 ```
 
 Quer travar numa versão/branch específica em vez do padrão do repositório
-(`main`)? Acrescente `@<branch-ou-tag-ou-commit>` no final da URL, antes das
+(`master`)? Acrescente `@<branch-ou-tag-ou-commit>` no final da URL, antes das
 aspas:
 
 ```bash
-pip install "git+https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git@v0.1.0"
+pip install "git+https://github.com/caioreigota/videototicket.git@v0.1.0"
 ```
 
 Esse método instala uma cópia fixa do pacote (não editável) — bom para quem
@@ -142,9 +139,9 @@ só quer *usar* a skill. Se você quiser editar o código depois, use a Opção 
 
 ### Opção B — clonar/copiar localmente primeiro (para editar o código)
 
-- **Repositório no GitHub** (público ou privado com acesso):
+- **Repositório no GitHub**:
   ```bash
-  git clone https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git videototicket
+  git clone https://github.com/caioreigota/videototicket.git
   cd videototicket
   ```
 - **Já está nesta máquina** (ex. você está lendo isto de dentro da pasta
