@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="src/videototicket/Banner.png" alt="Video to Ticket — transforme gravações de tela em tickets revisáveis" width="100%">
+</p>
+
 # Video to Ticket
 
 Transforme uma gravação de tela em um ticket pronto para revisão. A skill analisa o vídeo, seleciona os melhores frames, transcreve a narração, sugere passos para reproduzir o problema e cria o item no **Azure DevOps**, **Jira** ou **GitHub**.
@@ -60,13 +64,25 @@ videototicket install --platform claude
 videototicket install --platform agents
 ```
 
-Para manter a skill somente no projeto atual, acrescente `--project`:
+Para processar vídeos em um projeto específico, abra o terminal **na pasta em
+que você pretende colocar os vídeos** e instale com `--project`. Essa pasta
+será a raiz do projeto: o instalador criará nela `videototicket/pendentes/` e
+`videototicket/processados/`.
 
 ```bash
+cd /caminho/da/pasta-dos-videos
 videototicket install --platform codex --project
 ```
 
-No Codex, essa opção usa `.agents/skills/videototicket/` dentro do repositório.
+No PowerShell, por exemplo:
+
+```powershell
+Set-Location "C:\caminho\da\pasta-dos-videos"
+videototicket install --platform codex --project
+```
+
+No Codex, essa opção registra a skill em `.agents/skills/videototicket/`
+dentro dessa pasta de projeto.
 
 Nesse modo, o instalador também cria:
 
