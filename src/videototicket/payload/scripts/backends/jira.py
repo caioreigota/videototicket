@@ -127,7 +127,7 @@ def create_ticket(config, data, attachments=None):
     for field, value in {**(defaults.get("custom_fields") or {}), **(data.get("custom_fields") or {})}.items():
         fields[field] = value
 
-    parent = data.get("parent")
+    parent = data.get("parent") or config.get("default_parent")
     if config.get("require_parent_link") and not parent:
         raise TicketBackendError("config.json define require_parent_link=true, mas 'parent' não foi informado nos dados do ticket.")
     if parent:

@@ -32,11 +32,43 @@ execução neste projeto — conduza o usuário por um setup guiado antes de
 seguir:
 
 1. Copie `config.example.json` para `config.json`.
-2. Pergunte ao usuário qual plataforma de ticket ele usa: **Azure DevOps**,
-   **Jira** ou **GitHub**. Defina `platform` no config de acordo
-   (`"azure-devops"`, `"jira"` ou `"github"`).
-3. Dependendo da plataforma, pergunte os dados necessários e preencha o bloco
-   correspondente:
+2. Peça, nesta ordem, duas URLs de referência antes de solicitar os demais
+   dados:
+   - a URL de um **item pai real** sob o qual os bugs normalmente ficarão
+     (por exemplo, Epic, Feature, PBI ou projeto no Azure DevOps; Epic ou
+     Story no Jira);
+   - a URL de um **bug existente** que represente o padrão desejado pelo
+     time.
+
+   Solicite URLs completas e acessíveis ao usuário, mas **nunca** tokens ou
+   dados de autenticação na URL. Se o time não usar hierarquia, aceite que a
+   primeira URL seja omitida, registre `default_parent` como `null` e siga.
+   Para GitHub, aceite a URL de uma issue/projeto equivalente, esclarecendo
+   que a relação será textual ("Relacionado a #n").
+3. Identifique a plataforma pela URL, confirme-a com o usuário e defina
+   `platform` no config (`"azure-devops"`, `"jira"` ou `"github"`). Caso as
+   duas URLs apontem para plataformas ou escopos diferentes, pare e peça URLs
+   coerentes; não misture organizações, sites, projetos ou repositórios.
+
+   Extraia e use somente os identificadores estáveis:
+   - Azure DevOps: organização, projeto e ID numérico do item pai (URL como
+     `.../<projeto>/_workitems/edit/123`);
+   - Jira: URL do site, chave do projeto e chave do item pai (URL como
+     `.../browse/PROJ-123`);
+   - GitHub: `dono/repo` e número da issue.
+
+   Configure o identificador extraído como `default_parent` apenas se o
+   usuário confirmar que novos bugs devem, em regra, ser vinculados a ele.
+   Não grave as URLs completas no `config.json`.
+4. Use a URL do bug exclusivamente como exemplo de convenção: confira, de
+   forma somente leitura e após a autenticação estar disponível, o tipo do
+   item, título, labels/tags, responsável, área, severity e o mecanismo de
+   hierarquia. Replique apenas a estrutura e os valores que o usuário aprovar;
+   não copie descrição, comentários, anexos ou dados sensíveis do bug de
+   exemplo. Se a URL não puder ser consultada, peça ao usuário os campos
+   relevantes em vez de adivinhar.
+5. Dependendo da plataforma, pergunte os dados necessários que ainda não
+   foram obtidos pelas URLs e preencha o bloco correspondente:
    - **Azure DevOps**: organização (URL completa, ex.
      `https://dev.azure.com/minhaorg`), nome do projeto, time (para resolver
      a sprint atual — opcional, default `"<projeto> Team"`). Pergunte o
@@ -61,24 +93,28 @@ seguir:
    - **GitHub**: repositório no formato `dono/repo`. Autenticação é via `gh`
      CLI já logada (`gh auth login`) — não precisa de token em config nem em
      variável de ambiente. Confirme que `gh auth status` funciona.
-4. Pergunte se **todo ticket precisa ser filho de um item pai** (Epic/PBI/
+6. Pergunte se **todo ticket precisa ser filho de um item pai** (Epic/PBI/
    Feature) já existente — nem todo time trabalha assim. Se sim, defina
    `"require_parent_link": true`; senão, deixe `false` (default) e o campo
-   `parent` fica opcional por ticket.
-5. Pergunte defaults opcionais (pode pular e deixar vazio): responsável
+   `parent` fica opcional por ticket. Se houver `default_parent`, explique que
+   ele será sugerido e aplicado por padrão, mas poderá ser substituído por
+   ticket.
+7. Pergunte defaults opcionais (pode pular e deixar vazio): responsável
    padrão (`defaults.assignee`), labels/tags padrão (`defaults.labels` para
    Jira/GitHub, `defaults.tags` para Azure DevOps), tipo de ticket
    (`ticket_type`, default `"Bug"`), idioma da narração para a transcrição
    (`language`, default `"pt"`; use `"auto"` para detecção automática).
-6. As pastas de vídeo já têm um local **fixo por padrão**:
+8. As pastas de vídeo já têm um local **fixo por padrão**:
    `videototicket/pendentes` (a processar) e `videototicket/processados`
    (depois de criar o ticket), relativas à raiz do projeto — normalmente já
    criadas por `videototicket install --project`. Se não existirem ainda,
    crie-as agora. Só pergunte ao usuário se ele quiser usar outro
    caminho — nesse caso, ajuste `folders.pending`/`folders.processed` em
    `config.json` e crie as pastas informadas.
-7. Salve `config.json` e mostre um resumo do que foi configurado para
-   confirmação antes de seguir para o processamento de vídeos.
+9. Salve `config.json` e mostre um resumo do que foi configurado para
+   confirmação antes de seguir para o processamento de vídeos, incluindo o
+   identificador (nunca a URL inteira) do `default_parent` e os campos
+   aprovados a partir do bug de exemplo.
 
 **Nunca escreva tokens/senhas dentro de `config.json`** — eles vivem só em
 variáveis de ambiente que o próprio usuário exporta. `config.json` guarda
@@ -155,6 +191,8 @@ e do erro (ex.: o usuário narrando o que estava tentando fazer).
 
 Se `config.json` tiver `"require_parent_link": true`, todo ticket criado
 **precisa** ser filho de um item pai já existente na plataforma. Use o
+`default_parent`, se configurado, como candidato inicial. Confirme no
+rascunho se ele continua correto para o vídeo atual; se não estiver, use o
 helper para buscar candidatos por palavra-chave da tela/funcionalidade
 identificada nos frames:
 

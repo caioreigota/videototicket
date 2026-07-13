@@ -221,18 +221,18 @@ def create_ticket(config, data, attachments=None):
     if data.get("severity"):
         add("Microsoft.VSTS.Common.Severity", data["severity"])
 
+    parent = data.get("parent") or config.get("default_parent")
     if config.get("require_parent_link"):
-        parent = data.get("parent")
         if not parent:
             raise TicketBackendError("config.json define require_parent_link=true, mas 'parent' não foi informado nos dados do ticket.")
         patch.append({
             "op": "add", "path": "/relations/-",
             "value": {"rel": "System.LinkTypes.Hierarchy-Reverse", "url": f"{org}/_apis/wit/workItems/{parent}"},
         })
-    elif data.get("parent"):
+    elif parent:
         patch.append({
             "op": "add", "path": "/relations/-",
-            "value": {"rel": "System.LinkTypes.Hierarchy-Reverse", "url": f"{org}/_apis/wit/workItems/{data['parent']}"},
+            "value": {"rel": "System.LinkTypes.Hierarchy-Reverse", "url": f"{org}/_apis/wit/workItems/{parent}"},
         })
 
     tmp_dir = tempfile.mkdtemp(prefix="videototicket_")

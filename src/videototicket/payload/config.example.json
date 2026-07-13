@@ -3,6 +3,7 @@
   "ticket_type": "Bug",
   "language": "pt",
   "require_parent_link": false,
+  "default_parent": null,
 
   "folders": {
     "pending": "videototicket/pendentes",

@@ -71,7 +71,7 @@ def create_ticket(config, data, attachments=None):
         body_parts.append(data["descricao"])
     if data.get("repro_steps"):
         body_parts.append("### Passos para reproduzir\n" + data["repro_steps"])
-    parent = data.get("parent")
+    parent = data.get("parent") or config.get("default_parent")
     if parent:
         body_parts.append(f"Relacionado a #{parent}")
     body = "\n\n".join(body_parts) or "(sem descrição)"
